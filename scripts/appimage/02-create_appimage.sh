@@ -29,15 +29,13 @@ export RT="$PWD"
 
 cd "$RT/_build"
 
-status "Cloning Element Desktop"
+status "Cloning Element Desktop $BUILD_TYPE $ELEMENT_VERSION"
 
 git clone https://github.com/element-hq/element-desktop
 cd element-desktop
 if [[ "$BUILD_TYPE" == "stable" ]]; then
-    git checkout `curl --silent -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/element-hq/element-desktop/releases/latest | jq  -r '.tag_name'`
+    git checkout ${ELEMENT_VERSION}
 fi
-git describe --tags --always --match "v*.*"
-export ELEMENT_BUILD_VERSION="$(git describe --tags --always --match 'v*.*')"
 yarn install
 
 sed -i 's,docker run --rm -ti,docker run --rm,g' scripts/in-docker.sh
@@ -79,7 +77,7 @@ sudo rm -rf Element*.AppImage
 #cp -L /lib64/libcrypto.so.10 squashfs-root/usr/lib/.
 #cp -L /lib64/libssl3.so squashfs-root/usr/lib/.
 #cp -L /lib64/libssl.so.10 squashfs-root/usr/lib/.
-./appimagetool-x86_64.AppImage squashfs-root -n -u 'gh-releases-zsync|srevinsaju|element-appimage|continuous|Element*.AppImage.zsync' Element-$ELEMENT_BUILD_VERSION.glibc`ldd --version | grep 'ldd ' | grep -o ').[0-9].[0-9][0-9]' | grep -o '[0-9].[0-9][0-9]'`.AppImage
+./appimagetool-x86_64.AppImage squashfs-root -n -u 'gh-releases-zsync|srevinsaju|element-appimage|continuous|Element*.AppImage.zsync' Element-$ELEMENT_VERSION.glibc`ldd --version | grep 'ldd ' | grep -o ').[0-9].[0-9][0-9]' | grep -o '[0-9].[0-9][0-9]'`.AppImage
 rm -r ./appimagetool-x86_64.AppImage
 chmod +x *.AppImage
 rm -rf squashfs-root
