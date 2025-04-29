@@ -22,14 +22,13 @@ jobs:
         build_type: ['stable', 'develop']
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
       - name: Check version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export BUILD_TYPE="${{ matrix.build_type }}"
+          mkdir -p _build
+          cd _build
           git clone https://github.com/element-hq/element-desktop
           cd element-desktop
           if [[ "$BUILD_TYPE" == "stable" ]]; then
@@ -61,6 +60,10 @@ jobs:
           echo "GITHUB_CONTINUOUS_RELEASE_TYPE=${GITHUB_CONTINUOUS_RELEASE_TYPE}" >> "$GITHUB_ENV"
           echo "GITHUB_CONTINUOUS_RELEASE_NAME=${GITHUB_CONTINUOUS_RELEASE_NAME}" >> "$GITHUB_ENV"
 
+      - uses: actions/setup-node@v4
+        if: ${{ env.SKIP_BUILD != 'true' }}
+        with:
+          node-version-file: "_build/element-desktop/.node-version"
       - name: Build Element
         if: ${{ env.SKIP_BUILD != 'true' }}
         run: |

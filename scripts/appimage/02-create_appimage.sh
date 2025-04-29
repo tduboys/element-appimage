@@ -15,7 +15,6 @@ echo ""
 ls -al
 
 mkdir -p _deps 
-mkdir -p _build
 mkdir -p _release
 
 
@@ -27,14 +26,16 @@ status () {
 
 export RT="$PWD"
 
-cd "$RT/_build"
+cd "$RT/_build/element-desktop"
 
-status "Cloning Element Desktop $BUILD_TYPE $ELEMENT_VERSION"
+status "Updating Element Desktop to $BUILD_TYPE $ELEMENT_VERSION"
 
-git clone https://github.com/element-hq/element-desktop
-cd element-desktop
+git fetch --all
 if [[ "$BUILD_TYPE" == "stable" ]]; then
     git checkout ${ELEMENT_VERSION}
+else
+    git checkout develop
+    git pull
 fi
 yarn install
 
