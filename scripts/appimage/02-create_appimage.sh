@@ -58,7 +58,8 @@ cp $RT/patch.sh .
 yarn run docker:setup
 yarn run docker:install < /dev/null
 yarn run docker:build:native
-yarn run docker:build
+./scripts/in-docker.sh yarn run build:ts
+./scripts/in-docker.sh yarn run build:res
 ./scripts/in-docker.sh yarn run electron-builder -l appimage --publish never
 
 ls dist
